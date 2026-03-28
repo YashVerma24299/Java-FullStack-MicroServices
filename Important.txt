@@ -1,0 +1,166 @@
+1. WHY JAVA IS PLATFORM INDEPENDENT
+    We write code once → it becomes bytecode → this bytecode can run on any machine.
+    Reason:
+    Bytecode is NOT machine-specific.
+
+2. COMPLETE FLOW
+    .java (your code)
+        ↓ 
+    compile (javac)
+        ↓
+    .class (bytecode)
+        ↓
+    JVM runs it  (refer point 3)
+        ↓
+    Output
+
+3. JVM INTERNAL FLOW
+    Bytecode
+    ↓
+    Class Loader (loads classes)
+    ↓
+    Bytecode Verifier (checks safety)
+    ↓
+    Runtime Memory
+    ↓
+    Execution
+
+    JVM uses:
+    - Interpreter (line-by-line execution)
+    - JIT Compiler (optimization for repeated code)
+
+4. MEMORY (VERY IMPORTANT)
+    Heap (Shared):
+        Stores objects
+        Accessible by all threads
+    Stack (Per Thread):
+        Stores local variables
+        Stores method calls
+        Example:
+            Thread 1 Stack → X, Y
+            Thread 2 Stack → N1, N2
+
+5. THREAD CONCEPT (SIMPLE)
+    If 2 tasks: Sum & Fibonacci
+    Then:
+    → If 2 tasks AND you explicitly create threads → then 2 threads
+    → Otherwise → still single thread
+    Example:
+    Sum → X, Y in stack
+    Fibonacci → N1, N2 in stack
+
+6. PC REGISTER
+    Each thread has its own PC Register
+    Work:
+    → Tracks which line is executing
+
+7. JIT COMPILER (PERFORMANCE)
+    Normal: JVM runs code line by line (slow)
+    JIT:
+    * Finds repeated code
+    * Converts it into machine code
+    * Stores it
+    Next time:
+    → Runs faster (no repeat work)
+
+8. What is Multithreading?
+    Running multiple threads at the same time
+    Example: Task 1 + Task 2 run together
+    Refer 17 point
+
+9. By Default in Java
+    Every Java program has one thread:
+    Main Thread: public static void main(String[] args)
+
+10. CPU doesn’t run everything at same time
+    It does: Context Switching (very fast switching)   ->    So it feels parallel 
+
+11. Problem: Shared Data (HEAP)
+    Since Heap is shared: Multiple threads can access same object
+    This can cause:
+    → Data inconsistency
+    → Race condition
+    Example: count = count + 1;
+    → 2 threads do it same time → wrong result
+
+12. How to create a Thread
+    → Method 1: Extend Thread
+    class MyThread extends Thread {
+        public void run() {
+            System.out.println("Thread running");
+        }
+    }
+    public class Main {
+        public static void main(String[] args) {
+            MyThread t1 = new MyThread();
+            t1.start(); // starts new thread
+        }
+    }
+
+    → Method 2: Runnable (BEST PRACTICE)
+    class MyTask implements Runnable {
+        public void run() {
+            System.out.println("Task running");
+        }
+    }
+    public class Main {
+        public static void main(String[] args) {
+            Thread t1 = new Thread(new MyTask());
+            t1.start();
+        }
+    }
+
+13. Runnable is better because it separates “WHAT to do” from “HOW to run it”.
+    1. Problem with "extends Thread":
+        class MyThread extends Thread
+
+    → Java does NOT support multiple inheritance
+    → So if you do this: You cannot extend any other class
+        class MyThread extends Thread extends AnotherClass // ❌ not allowed
+    (This is a BIG limitation)
+
+
+    2. Advantage of Runnable
+        class MyTask implements Runnable
+
+    → Now you can still extend another class:
+        class MyTask "extends SomeClass" implements Runnable
+
+14. start() vs run():
+    t1.start():
+        Creates new thread
+        Runs parallel
+    t1.run():
+        Normal method call
+        No new thread
+
+15. Good POint;
+    → Threads are NOT stored in heap
+    → Heap is for objects
+    → Threads are managed by JVM + OS
+
+    Correct concept:
+    → Heap = shared data
+    → Stack = per thread (private)
+    → Heap IS shared   ->   That’s why problems happen (race condition)
+
+16. What is Thread
+    Thread = a unit of work (execution path)
+    By default: Java has ONLY ONE thread → Main Thread
+    So:
+        Task 1 → completes → Task 2 start
+    (No parallel execution)
+
+17. CONTEXT SWITCHING (VERY IMPORTANT)
+    CPU cannot run all threads at exact same time
+    So it does:
+    → Switch between threads very fast
+    Example:
+    Thread 1 → small work
+    Thread 2 → small work
+    Thread 1 → again
+    Thread 2 → again
+    This is called: CONTEXT SWITCHING
+    Because CPU switches "context" between threads
+
+18. 
