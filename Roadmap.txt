@@ -1,0 +1,12 @@
+1. Java Core Fundamentals
+   - JVM, JDK, Java internals
+   - Java basics
+   - OOP concepts
+
+2. Java Advanced Concepts
+   - Optionals
+   - Streams API
+   - Collections
+   - Functional programming
+
+3. 

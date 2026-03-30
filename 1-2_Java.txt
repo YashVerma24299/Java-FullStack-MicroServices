@@ -162,5 +162,3 @@
     Thread 2 → again
     This is called: CONTEXT SWITCHING
     Because CPU switches "context" between threads
-
-18. 
