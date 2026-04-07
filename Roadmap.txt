@@ -9,4 +9,11 @@
    - Collections
    - Functional programming
 
-3. 
+3. Ticket Booking App
+   - Architecture
+   - Functional Requirement
+   - Low level Design
+   - Business Logic
+
+4. Implementation on Ticket Booking App
+   -Work in Progress

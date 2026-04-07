@@ -1,0 +1,82 @@
+1. For any system design:
+    Step 1: Gather Functional Requirements (FR)
+        Understand what the system should do
+    Step 2: Build Low Level Design (LLD)
+        Define classes, objects, entities/models, and basic logic
+    Step 3: Design High Level Design (HLD)
+        Define overall architecture (services, layers, roles)
+
+2. In this project:
+    → Functional Requirements are gathered
+    → Low Level Design (LLD) is created for backend
+
+3. Overview:
+Ticket Booking System (IRCTC Type)
+├── Functional Requirements
+│ ├── User able to Signup / Login
+│ ├── Fetch/Search Train (source → destination)
+│ ├── View Available Seats
+│ ├── Book Ticket
+│ ├── View Ticket
+│ └── Cancel Ticket
+│
+├── Core Entities (Data Layer)
+│ ├── User
+│ │ ├── userId (UUID)
+│ │ ├── name
+│ │ ├── password (hashed)
+│ │ └── bookedTickets (List)
+│ │
+│ ├── Ticket
+│ │ ├── ticketId
+│ │ ├── userId
+│ │ ├── trainId
+│ │ ├── source
+│ │ ├── destination
+│ │ └── dateOfTravel
+│ │
+│ └── Train
+│   ├── trainId
+│   ├── trainNumber
+│   ├── arrivalTime
+│   ├── departureTime
+│   ├── seats (2D Matrix)
+│   ├──List<List>
+│   ├── 1 → Available
+│   └── 0 → Booked
+│ 
+└── Services (Business Logic Layer)
+  ├── UserBookingService
+  │ ├── signup()
+  │ ├── login()
+  │ ├── bookTicket()
+  │ ├── cancelTicket()
+  │ └── getBookings()
+  │
+  └── TrainService
+    ├── searchTrains(source, destination)
+    ├── getAvailableSeats(trainId)
+    └── updateSeat(trainId, seatNo)
+
+
+4. USER FLOW
+User
+↓
+Login / Signup
+↓
+Search Train (source → destination)
+↓
+View Available Seats
+↓
+Book Ticket
+↓
+View / Cancel Ticket
+
+
+5. SEAT STRUCTURE (IMPORTANT)
+Seats:
+[ [1,1,0,1],
+[1,0,0,1],
+[1,1,1,1] ]
+1 = available
+0 = booked
