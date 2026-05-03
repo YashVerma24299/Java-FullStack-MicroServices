@@ -140,4 +140,75 @@
         — IPv4 purana hai aur limited address hai, 
         — IPv6 naya hai aur almost unlimited addresses hai.
 
-16. 
+16. Context Switching
+    -> CPU switching from one task/process/thread to another
+    -> How Context Switching Works:
+        Process A running
+                ↓
+        CPU saves state of A                                  
+                ↓
+        CPU loads state of B
+                ↓
+        Process B starts running
+
+    -> IMPORTANT:
+        PROBLEM:
+            — Too many threads = too much switching
+            — System slow ho sakta hai
+        SOLUTION:
+            — Thread pools
+            — Async programming  -> JavaScript vaala Logic...
+    
+    -> More context switching ≠ more performance
+    -> Excess switching actually reduces performance
+
+    -> How CPU handles 2 threads at a single time:
+        1. Normal:
+            — Only one thread runs at a time.
+            — But it switches very fast:
+            — T1 → T2 → T1 → T2 → T1 ...
+            👉 Each thread gets a small time slice
+
+        2. Priority (VERY IMPORTANT):
+            — T1 priority > T2 priority
+            👉 Then:
+                — T1 runs more
+                — T2 gets less CPU
+        
+        3. Thread State
+            — If a thread is: Waiting (I/O, API call, DB)
+            👉 CPU gives time to other thread
+
+        4. OS Scheduling Algorithm
+            Round Robin
+            Priority Scheduling
+            Multilevel Queue
+
+    -> Example Scenario:
+        T1 = API request (waiting for DB)
+        T2 = simple calculation
+        Flow:
+            T1 starts → waits for DB
+            CPU switches to T2
+            T2 runs fully
+            T1 resumes later
+
+17. SingleThread, MultiThread, Thread_Pool -> Images
+    → Read Each Page
+
+18. Thread Pool:
+    -> A thread pool is a group of pre-created threads that are reused to perform tasks.
+    -> Instead of creating a new thread every time, we use existing threads from the pool
+    -> Why needed:
+        - Creating threads is expensive (takes time & memory)
+    -> How it works:
+        - Tasks (requests) come in
+        - Thread pool assigns a free thread
+        - Thread completes task
+        - Thread goes back to pool (reuse)
+
+    -> Example:
+        100 users hit API
+        → Instead of creating 100 threads
+        → Use 10 threads in pool
+        → Tasks handled one by one
