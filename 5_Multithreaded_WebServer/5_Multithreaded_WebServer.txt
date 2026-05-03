@@ -1,0 +1,143 @@
+1. What is a Server
+    A server is simply a machine (computer or program) that provides services or data to other machines.
+    A server = something that responds to requests
+    Example:
+    → You open a website → your browser sends a request
+    → The server receives it → sends back data (HTML, JSON, etc.)
+
+2. What is a Web Server
+    A web server is a special type of server -> that handles HTTP/HTTPS requests.
+    A web server = server that serves websites
+
+3. Types of Servers:
+    Web Server → serves websites
+    Database Server → stores data
+    File Server → stores files
+    Application Server → runs business logic
+
+4. Concept:
+    When you use Spring Boot, it runs an embedded web server (like Tomcat)
+    That’s why your app can handle requests like:  http://localhost:8080/.....
+
+5. Socket, Client_Server, TCP_UDP -> Images
+    → Read Each Page
+
+6. Every server on internet has a unique identity:
+    -> IP Address → like 142.250.183.14
+    -> Domain Name → like google.com
+    🔹 Real Life Analogy/ Example
+        -> IP Address = House number
+        -> Domain = Person name
+        -> DNS(Domain Name System) = Phonebook
+
+7. What is ISP
+    Internet Service Provider = Company that gives you internet
+    Examples: Jio, Airtel
+    👉 Without ISP → no internet → no server access
+
+8. What are Routers
+    Routers decide which path your request takes
+
+9. What is IP + Port
+    → IP + Port = specific service
+    → Perfect concept:
+        IP = Machine
+        Port = Application inside machine
+    → Example:
+        IP: 142.250.183.14
+        Port: 80 → HTTP
+        Port: 443 → HTTPS
+        Port: 8080 → Spring Boot
+        → So:
+            IP tells WHERE
+            Port tells WHAT service
+
+10. TCP (Transmission Control Protocol)
+    -> Features:
+        Reliable 
+        Ordered 
+        Connection-based 
+    -> Example:
+        Web (HTTP/HTTPS)
+        Banking
+        APIs
+
+11.  UDP (User Datagram Protocol)
+    -> Features:
+        Fast 
+        No guarantee 
+        No connection 
+    -> Example:
+        Video streaming
+        Gaming
+        Live calls
+
+12. Client Server Flow
+    1. User enters URL:
+        Example: google.com
+
+    2. DNS Lookup:
+        System asks DNS:
+            "What is IP of google.com?"
+        DNS returns:
+            142.250.xxx.xxx
+
+    3. Request goes via ISP:
+        ISP = Internet Service Provider (Jio, Airtel)
+        Your request enters the internet through ISP
+
+    4. Routers Forward Request:
+        Routers find best path (like Google Maps)
+        They forward request step by step to server
+
+    5. Request reaches Server:
+        Format: IP + Port
+        Example: 142.250.xxx.xxx:443
+        IP   = which machine
+        Port = which service
+
+    6. TCP Handshake (Connection Setup):
+        Client → SYN
+        Server → SYN-ACK
+        Client → ACK -------then-------Connection established
+
+    7. Server Processes Request:
+        - Runs backend code
+        - Fetches data from DB
+        - Prepares response
+
+    8. Response Sent Back:
+        Client receives:
+        - HTML (website)
+        - JSON (API)
+
+13. what is SOCKET
+    -> Basic Definition: Socket = IP + Port
+    -> It represents a connection endpoint
+    
+    -> But what does that REALLY mean?
+        When 2 machines communicate:
+            → One is client
+            → One is server
+        They don’t just use IP — they also need port to identify the exact service.
+        So:
+            → Socket = (IP address, Port number)
+
+    -> Socket is created when: Client connects to server
+
+    -> Real Example: 
+        Client: 192.168.1.10:5000
+        Server: 142.250.xxx.xxx:443
+        This creates a connection: (Client IP + Port) ↔ (Server IP + Port)
+
+    -> One server → many sockets
+
+14. What is IP Address?
+        Unique identity of a device on network
+
+15. IPV4 and IPV6
+    ->IPv4 aur IPv6 dono internet par devices ko identify karne ke address systems hain 
+        — IPv4 purana hai aur limited address hai, 
+        — IPv6 naya hai aur almost unlimited addresses hai.
+
+16. 
