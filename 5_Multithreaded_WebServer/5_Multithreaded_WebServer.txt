@@ -212,3 +212,7 @@
         → Instead of creating 100 threads
         → Use 10 threads in pool
         → Tasks handled one by one
+
+19. ExecutorService 
+        -> ExecutorService manages a pool of threads and reuses them to efficiently handle multiple client requests without creating excessive threads.
+    
