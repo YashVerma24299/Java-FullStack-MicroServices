@@ -32,17 +32,17 @@
    - Inversion of Control
    - Beans
    - Dependency Injection (DI)
-   - Types:
-     → Constructor Injection
-     → Setter Injection
-     → Factory Method
    - Object Lifecycle Understanding
-   - Debugging
 
 7. Spring 
-   - Proxies (CGLIB, Reflection)
+   - Proxies (Dynamic Proxy ,CGLIB, Reflection)
+   - Cacheable
+   - Code Implementation
 
 8. Spring AOP
-   - Aspect-Oriented Programming
-   - Pointcuts
-   - Practical usage
+   - Aspect-Oriented Programming Concepts
+   - Advice
+   - JoinPoint
+   - PointCut
+   - Weaving
+   - Code Implementation
