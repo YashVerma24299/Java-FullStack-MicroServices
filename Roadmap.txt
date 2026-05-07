@@ -25,3 +25,24 @@
    - Multithreaded Server
    - Performance Testing
    - Thread Pool Optimization
+
+6. Spring Core
+   - Why Spring Boot?
+   - Build Tool
+   - Inversion of Control
+   - Beans
+   - Dependency Injection (DI)
+   - Types:
+     → Constructor Injection
+     → Setter Injection
+     → Factory Method
+   - Object Lifecycle Understanding
+   - Debugging
+
+7. Spring 
+   - Proxies (CGLIB, Reflection)
+
+8. Spring AOP
+   - Aspect-Oriented Programming
+   - Pointcuts
+   - Practical usage
