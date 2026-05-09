@@ -117,4 +117,109 @@
       → Can:
          - Read class metadata
          - Access methods
-         - Create objects dynamically
+      → Normal method call: user.introduce()
+      → Reflection call:
+         Method m = user.getClass().getMethod("introduce", String.class);
+         m.invoke(user, "Yash");
+
+      → Method name decided at runtime
+
+      → Relationship Between Reflection and Proxy
+         Proxy intercepts method call  →   Reflection invokes actual method
+         Example:
+            proxy.method()
+                  ↓
+            invoke()
+                  ↓
+            method.invoke(realObject, args)
+
+      -> PersonInvocationHandler in 1_Proxies Folder (Above Relation)
+
+11. Why Spring Boot Startup Time is High?
+      → Spring Boot performs many operations during application startup
+      → Main reasons:
+         - Bean creation
+         - Dependency Injection
+         - Annotation processing
+         - Proxy creation
+         - Reflection usage  (Reflection is slower than normal method calls)
+         - Auto-configuration
+
+12. Spring Startup Flow:
+      Application Starts
+               ↓
+      Spring scans all classes
+               ↓
+      Finds annotations:
+         - @Component
+         - @Service etc
+               ↓
+      Creates Beans
+               ↓
+      Injects dependencies
+               ↓
+      Creates proxies if needed
+               ↓
+      Application ready
+
+13. Why Spring Needs Reflection:
+      → Spring does not know classes beforehand
+      → At runtime Spring dynamically:
+         - Finds classes
+         - Reads annotations
+         - Creates objects
+         - Calls constructors
+         - Injects dependencies
+      → Reflection enables this dynamic behavior
+
+14. Cacheable
+      -> Normal Caching
+      -> If any confusion in above context, use Ai for clarification
+
+15. AOP Runtime Flow
+      → Suppose we want to use function 'X' from a library and apply additional functionality around it.
+      → Before executing function X:
+         - We can execute some methods
+      → After executing function X:
+         - We can execute some other methods
+
+      → This before-and-after functionality is handled using AOP (Aspect-Oriented Programming)
+      → AOP works dynamically at runtime 
+
+      → If function X throws an exception or fails during execution:
+         → We can also define methods:
+            - before exception handling
+            - after exception handling
+
+16. Simple Real-Life Analogy of AOP
+      Imagine:
+         You enter mall
+      Before entering:
+         - Security check
+         - Ticket validation
+      Same in AOP:
+         Extra logic runs:
+         - before method
+         - after method
+         - around method
+
+17.. Terminologies
+      A. Join Point
+         → Point where extra logic can be applied
+
+      B. Advice
+         → Actual action performed by aspect
+         Types:
+             - Before
+             - After
+             - Around
+             - AfterReturning
+             - AfterThrowing
+
+      C. Pointcut
+         → Defines WHERE aspect should apply
+
+      D. Weaving
+         → Process of connecting aspect with target object
+
+18. 
