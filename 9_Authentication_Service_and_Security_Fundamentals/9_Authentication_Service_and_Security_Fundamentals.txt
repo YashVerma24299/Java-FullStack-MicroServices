@@ -1,0 +1,173 @@
+1. Authentication
+    → Authentication means: 
+        - verifying WHO you are
+        - It is an process -> verifying -> (username + password + token)
+        - It never talk about the permission
+    → Real Example:
+        You enter: username + password
+        Server checks: correct or not
+        If correct:
+            user authenticated 
+
+2. Authorization
+    → Authorization means: 
+        - what you are ALLOWED to access
+        - It is an process ->  check -> user's permission
+        - What can you do?
+    → Real Example:
+        ADMIN:
+            - delete users
+            - manage system
+        USER:
+            - only view profile
+
+3. Flow:
+    → Authentication
+        ↓
+      Authorization
+    → First: system checks identity
+    → Then: system checks permissions
+
+4. What is JWT (JSON Web Token) / Token
+    → JWT is an object
+    → JWT is used for: authentication and authorization
+    → Secure stateless authentication token
+
+5. Why JWT Needed?
+    Traditional Authentication:
+        - Server stores session in memory/database
+    Problem:
+        - hard to scale
+        - difficult in microservices
+    JWT Solution:
+        - Store user information inside token itself
+
+6. JWT is Stateless
+    → Server usually does NOT store session
+    → Token itself contains user information
+
+7. JWT Parts
+    A. HEADER
+        Contains:
+            - algorithm
+            - token type
+        Example:
+            {
+              "alg": "HS256",
+              "typ": "JWT"
+            }
+
+    B. PAYLOAD
+        Contains:
+            claims (actual data)
+
+    C. SIGNATURE
+        Used for:
+            verification and security
+
+8. What are Claims?
+    → Claims = information/data stored inside JWT
+    → Payload section contains claims
+
+9. Types of Claims
+    A. Registered Claims
+        - predefined claims
+        - Examples:
+            sub → subject/user
+            exp → expiration time
+            iss → issuer
+            iat → issued time
+
+    B. Public Claims
+        - Custom shared claims
+        - Example: role, email
+
+    C. Private Claims
+        - Application-specific claims
+        - Example: employeeId, department
+
+10. How JWT Verification Works
+        Client sends JWT
+                ↓
+        Server checks signature
+                ↓
+        Server checks expiry
+                ↓
+        Extract claims
+                ↓
+        Request allowed
+
+11. Where JWT Sent?
+    → Usually inside:
+        Authorization Header
+    → Example:
+        Authorization: Bearer eyJhbGc...
+
+12. Access Token
+    → Short-lived JWT
+    → Used for:
+        - accessing APIs
+    → Expiry Time:
+        - 15 min
+        - 30 min
+
+13. Refresh Token
+    → Long-lived token
+    → Used for:
+        generating new access token
+
+14. Why Refresh Token Needed?
+    → If access token long-lived: security risk
+
+15. Opaque Token
+    → random token string
+    → contains NO readable data
+    → acts like an ID/reference key
+    → actual user/session data stored in DB or Redis
+    Flow:
+        User logs in
+            ↓
+        Server generates opaque token
+            ↓
+        Token stored in DB/Redis
+            ↓
+        Client receives token
+            ↓
+        Client sends token during API call
+            ↓
+        Server matches token from DB
+            ↓
+        User/session verified
+
+16. Access Token and Refresh Token
+
+    - Suppose we have an Access Token and a Refresh Token.
+    - When a user logs in for the first time, applications like Paytm generate both an access token and a refresh token.
+
+    - The Access Token is short-lived and is generally valid for around 15–30 minutes.
+    - The Refresh Token is long-lived and is usually stored securely in a database or Redis with an expiry time, for example 30 days.
+
+    - Now, suppose the user closes the browser tab and opens the application again within 15 minutes. In that case, the existing access token is still valid, so the application continues using it.
+    - However, if the user opens the application after the access token has expired, the backend first checks the JWT access token. Inside the JWT, we already store details like the username or user ID as claims.
+    - The server extracts the username/user ID from the token and checks the database to confirm that the user exists. If the user exists but the access token has expired, the system then validates the refresh token.
+
+    - At this stage:
+        - If the refresh token is also expired or invalid, the user must log in again.
+        - If the refresh token is still valid, the server generates a new access token and sends it back to the client.
+
+    - So, the overall flow is:
+        1. User sends JWT with the request.
+        2. Server extracts user information from the token.
+        3. Server verifies the user from the database.
+        4. Server checks whether the access token is expired.
+        5. If expired, the refresh token is validated.
+        6. If the refresh token is valid, a new access token is generated; otherwise, the user must log in again.
+
+17. Latency
+    → request send time + response receive time
+    → If more data in JWT -> High Latency
+    → for measuring Latency: Performance Metrics
+        - p50 → average user experience
+        - p95 → 95% requests complete within this time
+        - p99 → 99% requests complete within this time
+    → Example of p99 (300ms): 99% requests completed within 300ms

@@ -47,4 +47,15 @@
    - Weaving
    - Code Implementation
 
-9.
+9. Expense Tracker (Authentication Service & Security Fundamentals)
+   - Authentication vs Authorization
+   - JWT (JSON Web Token)
+   - Access Token
+   - Refresh Token
+   - Opaque Token
+   - Stateless Authentication
+   - Token Expiry & Renewal
+   - Latency
+   - p99 / p99.9 Metrics
+
+10. 
