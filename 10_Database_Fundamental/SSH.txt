@@ -1,0 +1,82 @@
+1. WHAT I ACTUALLY BUILT:
+    → I configured my Ubuntu system as a local development server.
+    → This means my own laptop is behaving like a server where I can run:
+        - MySQL
+        - Backend applications
+        - Docker containers
+        - Kafka
+        - Redis
+        - APIs
+        - SSH server
+    → So instead of renting a cloud server like AWS, I am temporarily using my own machine as a server for learning.
+
+2. WHAT IS A VIRTUAL MACHINE (VM)?
+    → A Virtual Machine (VM) is basically: "Computer inside another computer"
+    → The VM gets:
+        - Its own Operating System
+        - RAM
+        - CPU cores
+        - Storage
+        - IP Address
+        - Ports
+    → Inside that VM we can install:
+        - MySQL
+        - Kafka
+        - Docker
+        - Backend services
+        - Nginx
+        - Redis
+
+3. WHAT IS SSH?
+    → SSH = Secure Shell
+    → SSH allows secure remote access to another machine/server through terminal.
+    → Syntax: ssh username@ip-address
+    → Example:
+        ssh yash-verma@192.168.1.18
+    → Meaning:
+        "Connect to machine 192.168.1.18 using user yash-verma"
+
+4. WHAT HAPPENS DURING SSH?
+    → SSH creates encrypted communication between:
+    → Client Machine
+        |
+        |
+      SSH Server
+    → This allows: Remote terminal access, File transfer, Secure communication, Deployment
+
+5. GIT SSH FLOW
+    → Laptop
+        |
+        |--- Private Key
+        |
+        |--- Public Key ---> GitLab
+    → When doing:
+        - git push → GitLab checks: "Does this private key match uploaded public key?"
+        - If yes -> Access granted.
+
+6. SSH SERVER SETUP
+    → Commands used:
+        - sudo apt install openssh-server
+        - sudo systemctl start ssh
+    → This installed:
+        - SSH SERVER
+    → Now my machine can accept remote SSH connections.
+
+7. IMPORTANT DIFFERENCE:
+    → Git SSH
+    - Used for Git authentication
+    - Used for git push/pull
+    - Connects to GitLab
+
+    → SSH Server
+    - Used for remote terminal login
+    - Used for server access
+    - Connects to Linux machine
+
+    → Both are completely different systems.
+
+8. WHAT HAPPENED WHEN I DID: ssh yash-verma@192.168.1.18
+    → I basically SSH'ed into my own machine.
+    → Meaning:
+        - My laptop connected to itself using SSH.
+        - That is why terminal showed: Last login from 192.168.1.18

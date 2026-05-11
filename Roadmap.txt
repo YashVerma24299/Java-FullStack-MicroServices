@@ -58,4 +58,14 @@
    - Latency
    - p99 / p99.9 Metrics
 
-10. 
+10. Expense Tracker (Database Fundamentals)
+   - Distributed Systems
+   - Load Balancer
+   - SQL vs NoSQL
+   - CAP Theorem
+   - VPS (Virtual Private Server)
+   - Virtual Machine (VM)
+   - MySQL
+   - Ubuntu Server Setup
+   - SSH (Secure Shell)
+
