@@ -69,3 +69,8 @@
    - Ubuntu Server Setup
    - SSH (Secure Shell)
 
+11. Expense Tracker (Low Level Design, Database modelling)
+   - LLD
+   - ER Diagram
+   - Templatisation Service 
+

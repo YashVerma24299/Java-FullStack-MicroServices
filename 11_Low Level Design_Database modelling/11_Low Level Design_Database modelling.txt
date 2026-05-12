@@ -1,0 +1,16 @@
+1. Low Level Design and Database modelling of Project
+    - https://ginger-uranium-8af.notion.site/EP01-Auth-Service-9ff640aee5cb435ebd22be61b5fb1aae
+
+2.Templatisation Service
+    - A Templatisation Service (or Template Service) is a service responsible for -> Generating dynamic content using predefined templates.
+    - It replaces placeholders/variables inside templates with actual runtime data.
+    - Example Template:
+        - Hello {{name}}, Your OTP is {{otp}}.
+        - At runtime:
+            - name = Yash
+            - otp = 4582
+        - After replacement:
+            - Hello Yash,Your OTP is 4582.
+        - This replacement process is called: Templatisation
+
+        
