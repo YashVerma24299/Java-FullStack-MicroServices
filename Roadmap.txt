@@ -74,3 +74,5 @@
    - ER Diagram
    - Templatisation Service 
 
+12. Expense Tracker (Spring boot and security with Jwt Authentication, access and refresh tokens)
+   - 
