@@ -74,4 +74,9 @@
    - ER Diagram
    - Templatisation Service 
 
-12. Expense Tracker (Spring boot and security  Authentication)
+12. Expense Tracker (Spring boot and security with Jwt Authentication, access and refresh tokens)
+   - Code Implementation 
+      - Entities, Services, Repositories, Models, SecurityConfig, JwtFilter, UserConfig
+   - MySQL setup and running in our virtual server
+
+13. 

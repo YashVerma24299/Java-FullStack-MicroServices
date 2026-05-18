@@ -1,0 +1,41 @@
+JWT Authentication & MySQL VM Connection Setup Notes
+    1. Firstly, I completed my JWT authentication service code.
+
+    2. While connecting MySQL, I realized that I had created a Virtual Machine (VM) inside my computer, and inside that VM, a MySQL instance was running.
+
+    3. Current Setup:
+        - Spring Boot application is running on the host machine.
+        - A Virtual Machine (VM) is running inside the same system.
+        - MySQL server is running inside the VM.
+
+    4. Problem:
+        - The VM has its own IP address.
+        - MySQL was configured to accept connections only from: 127.0.0.1
+        - Since the Spring Boot application was running outside the VM, the database connection request was treated as an external connection and was rejected by MySQL.
+    
+    5. Solution:
+        - I edited the MySQL configuration file using: sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+        - Then changed:
+            bind-address = 127.0.0.1
+                    ↓
+            bind-address = 0.0.0.0
+        - Purpose:
+            - 0.0.0.0 allows MySQL to accept connections from external IP addresses.
+            - After that, I configured database properties inside application.properties:
+            * Database URL
+            * Username
+            * Password
+
+    6. Next Issue:
+        When making the first database request, I encountered a permission/access error.
+        - Fix:
+            Logged into MySQL using: sudo mysql -u root -p
+            Then created a user and granted permissions.
+        - Commands Used:
+            CREATE USER 'root'@'192.168.1.18' IDENTIFIED BY '1212';
+            GRANT ALL PRIVILEGES ON expense_tracker.* TO 'root'@'192.168.1.18';
+            FLUSH PRIVILEGES;
+
+    7. Finally:
+        - Restarted the MySQL service.
+        - After restarting, the Spring Boot application successfully connected with the MySQL database running inside the VM.
