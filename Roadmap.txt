@@ -79,4 +79,8 @@
       - Entities, Services, Repositories, Models, SecurityConfig, JwtFilter, UserConfig
    - MySQL setup and running in our virtual server
 
-13. 
+13. Linux Basics and Kafka Installation
+   - SSH
+   - SSH Commands
+   - Linux Users
+   - Kafka Setup

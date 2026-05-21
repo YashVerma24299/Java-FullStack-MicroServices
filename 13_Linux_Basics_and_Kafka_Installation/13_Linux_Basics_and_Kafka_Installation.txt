@@ -1,0 +1,222 @@
+1. What is SSH
+    - SSH = Secure Shell
+    - SSH is a secure protocol used to:
+        → connect one computer to another
+        → login into servers
+        → securely transfer files
+        → authenticate GitHub/GitLab
+        → create encrypted communication
+    SSH = Secure encrypted communication + identity verification
+
+2. Why SSH is Used
+    SSH is used because:
+    → Secure
+    → Encrypted
+    → Passwordless authentication
+    → Safer than normal passwords
+    → Preferred by developers
+
+    Common Uses:
+    → GitHub / GitLab authentication
+    → Server login
+    → Cloud VM access
+    → Remote machine control
+
+3. How to See SSH Files:
+    - Go to SSH folder: cd ~/.ssh
+    - Show all files (including hidden): ls -la
+    - Example Output:
+        id_ed25519
+        id_ed25519.pub
+        known_hosts
+        config
+    - Meaning of Files
+        id_ed25519
+            → Private SSH key
+            → Secret key
+            → Never share
+
+        id_ed25519.pub
+            → Public SSH key
+            → Safe to share
+
+        known_hosts
+            → Stores trusted servers
+
+        config
+            → Stores custom SSH settings
+
+4. How SSH Works:
+    Step 1: Generate SSH keys
+        → Command: ssh-keygen -t ed25519
+        → ssh-keygen = SSH Key Generator tool and Used to create SSH keys 
+        → t = Means "type" 
+        → ed25519 = Algorithm of SSH key -> Modern, secure, fast algorithm
+
+        🔹 Can We Use Other Types Instead of ed25519 -> YES.
+            Examples:
+                - ssh-keygen -t rsa
+                - ssh-keygen -t ecdsa
+                - ssh-keygen -t dsa
+                
+    Step 2: SSH creates
+        → Private Key
+        → Public Key
+
+    Step 3: Key Usage
+        → Private key
+            - Secret
+            - Used for authenticationb
+        → Public key
+            - Uploaded to GitHub/GitLab
+
+    Step 4: When connecting
+        → GitHub/GitLab asks: "Prove your identity"
+        → Your computer uses: Private key
+        → Server checks: Matching public key
+        → If matched: Access granted
+
+5. Linux Users Concept:
+    1. In Ubuntu/Linux
+        - Each user gets separate:
+            → Home folder
+            → SSH keys
+            → Git config
+            → Files
+            → Settings
+        - Example:
+            → /home/yash-verma
+            → /home/yash2
+    
+    2. Multiple Linux Users
+        → If you create another user:
+            - sudo adduser yash2
+        → Ubuntu creates:
+            - /home/yash2
+        → That user gets separate:
+            ~/.ssh/
+            ~/.gitconfig
+        → So:
+            - No conflict
+            - Independent setup
+
+    3. SSH for Multiple Users
+        → User 1:
+            /home/yash-verma/.ssh/id_ed25519
+        → User 2:
+            /home/yash2/.ssh/id_ed25519
+        → Both users can:
+            - use different Git accounts
+            - use different SSH keys
+            - use same laptop
+
+    4. Same IP but Different Users
+        → Important Concept:
+            Different Linux users ≠ Different internet IP
+
+        → Both users usually use:
+            - Same WiFi
+            - Same Router
+            - Same Internet IP
+
+    5. How User Switching Works
+        → Login Screen Method: Logout
+            - Select another user
+            - Login separately
+
+        → Terminal Method
+            - Switch user: su - yash2
+
+6. Take Reference from this Url: Installation
+    - https://www.digitalocean.com/community/tutorials/how-to-install-apache-kafka-on-ubuntu-20-04
+
+7. KAFKA INSTALLATION & SETUP
+    1. CREATE KAFKA USER
+    → Create separate Kafka user:
+        - sudo adduser kafka
+    → Switch to kafka user:
+        - su -l kafka
+
+    → WHAT IS sudo ?
+        → sudo = Super User DO
+        → Used to run commands as administrator/root.
+        → Example: sudo systemctl start kafka
+        → Without sudo:
+            - protected files cannot be edited
+            - services cannot be started
+            - packages cannot be installed
+        
+    → WHAT IS nano ?
+        → nano = Linux text editor
+        → Used to:
+            - create files
+            - edit files
+            - modify config files
+
+    2. DOWNLOAD KAFKA
+        → Go to Downloads folder: 
+            - cd ~/Downloads
+        → Download Kafka:
+            - wget https://downloads.apache.org/kafka/4.1.1/kafka_2.13-4.1.1.tgz
+        → Extract Kafka:
+            - tar -xzf kafka_2.13-4.1.1.tgz
+        → Rename folder:
+            - mv kafka_2.13-4.1.1 kafka
+
+    3. CONFIGURE KAFKA (KRaft Mode)
+        → Open server.properties:
+            - nano ~/Downloads/kafka/config/server.properties
+        → Update/add these properties:
+            process.roles=broker,controller
+            node.id=1
+            controller.quorum.voters=1@localhost:9093
+            listeners=PLAINTEXT://:9092,CONTROLLER://:9093
+            advertised.listeners=PLAINTEXT://localhost:9092
+            listener.security.protocol.map=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+            controller.listener.names=CONTROLLER
+            inter.broker.listener.name=PLAINTEXT
+            log.dirs=/tmp/kraft-combined-logs
+
+    4. GENERATE CLUSTER ID
+        Generate UUID:
+            - ~/Downloads/kafka/bin/kafka-storage.sh random-uuid
+
+    5. FORMAT KAFKA STORAGE
+        → Run:
+            ~/Downloads/kafka/bin/kafka-storage.sh format
+            -t YOUR_UUID
+            -c ~/Downloads/kafka/config/server.properties
+
+
+    6. CREATE KAFKA SERVICE
+        → Open service file:
+            - sudo nano /etc/systemd/system/kafka.service
+        →  Paste:
+            [Unit]
+            Description=Apache Kafka Server
+            After=network.target
+
+            [Service]
+            Type=simple
+            User=kafka
+            ExecStart=/bin/sh -c '/home/kafka/Downloads/kafka/bin/kafka-server-start.sh /home/kafka/Downloads/kafka/config/server.properties > /home/kafka/Downloads/kafka/kafka.log 2>&1'
+            ExecStop=/home/kafka/Downloads/kafka/bin/kafka-server-stop.sh
+            Restart=on-abnormal
+
+            [Install]
+            WantedBy=multi-user.target
+
+    7. RELOAD SYSTEMD
+        →  sudo systemctl daemon-reload
+
+    8. START KAFKA
+        →  sudo systemctl start kafka
+
+    9. CHECK STATUS
+        → systemctl status kafka
+        →  If successful:
+            - Active: active (running)
+
+    10. VIEW LOG FILE
+        → Open logs:
+            - nano ~/Downloads/kafka/kafka.log
