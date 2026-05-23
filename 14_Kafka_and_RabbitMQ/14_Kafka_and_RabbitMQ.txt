@@ -1,0 +1,307 @@
+--- https://drive.google.com/file/d/13mUxuNwqGKTLm0orAia-94OdqUHMhmiq/view  or Kafka_and_RabbitMQ.pdf
+--- https://engineering.fb.com/2021/02/22/production-engineering/foqs-scaling-a-distributed-priority-queue/
+
+1. Monolithic Architecture
+    - Monolithic Architecture is a traditional software architecture where the entire application is developed and deployed as a single application/codebase.
+    - All modules are tightly connected and run together.
+    - Example modules inside one application:
+        - User Service
+        - Payment Service
+        - Order Service
+        - Notification Service
+
+    - Problems in Monolithic Architecture:
+        - Suppose
+            - User Service receives 1,000 requests/sec
+            - Payment Service receives 10,000 requests/sec
+        - Since both are inside the same application
+            - Heavy traffic on Payment Service affects the whole application.
+            - Entire application may slow down or crash.
+            - User Service may also become unavailable even though its traffic is normal.
+
+    - Disadvantages of Monolithic Architecture:
+        - Entire application is tightly coupled
+        - One module failure can affect the whole system
+        - Deployment becomes difficult for large applications
+        - Large codebase becomes hard to maintain
+
+2. Microservices Architecture
+    - In Microservices Architecture, each service is developed and deployed independently.
+    - Each service has
+        - Independent deployment
+        - Independent scaling
+        - Separate instances
+        - Sometimes separate databases
+    - Example
+        - User Service
+        - Payment Service
+        - Notification Service
+
+    - Example Scenario
+        - Suppose
+            - User Service → 1,000 requests/sec
+            - Payment Service → 10,000 requests/sec
+        - Then
+            - Only Payment Service needs scaling.
+            - Multiple Payment Service instances are created.
+            - Load Balancer distributes requests.
+        - Other services continue working normally.
+
+3. Communication in Microservices
+    - Services are independent, so they require communication mechanisms.
+    - Example
+        - User Service
+        - Payment Service
+    - Services communicate using:
+        - REST APIs
+        - HTTP
+        - Kafka
+        - RabbitMQ
+
+    1. Synchronous Communication
+        - One service sends a request and waits for a response.
+        - Example
+            - User Service calls Payment Service API.
+            - User Service waits until response arrives.
+        - Used with
+            - REST APIs
+            - HTTP Calls
+
+        - Problems in Synchronous Communication
+            - If Payment Service becomes slow/down:
+                - User Service keeps waiting
+                - Response time increases
+                - Multiple waiting requests can overload the system
+
+        - Solutions
+            - Timeout
+            - Retry
+            - Circuit Breaker
+
+    2. Circuit Breaker
+        - A protective layer between services.
+        - Example
+            - User Service → Circuit Breaker → Payment Service
+        - Working:
+            - Initially
+                - Circuit Breaker remains CLOSED
+                - Requests pass normally
+
+            - If failures/timeouts increase:
+                - Circuit Breaker becomes OPEN
+                - Further requests are blocked temporarily
+
+            - After some time:
+                - HALF-OPEN state checks service health
+
+            - Benefits
+                - Improves fault tolerance
+                - Saves resources
+
+    3. Asynchronous Communication
+        - A service sends an event/message without waiting for an immediate response.
+        - Example:
+            - Order Service publishes: "Order Created"
+            - Other services consume later:
+                - Payment Service
+                - Notification Service
+
+        - Technologies Used:
+            - Kafka
+            - RabbitMQ
+            - Message Queues
+            - Event Brokers
+
+        - Advantages of Async Communication
+            - Better scalability
+            - Loose coupling
+            - Faster processing
+            - Better fault tolerance
+            - High throughput
+
+4. Messaging Systems in Microservices
+    - Messaging systems act as intermediaries between services.
+    - Instead of direct service-to-service communication
+        - Producer sends messages to broker
+        - Broker stores/manages messages
+        - Consumer processes messages independently
+
+    - Benefits of Messaging Systems
+        - Scalability
+        - High throughput
+        - Loose coupling
+        - Retry handling
+        - Fault tolerance
+
+    - Messaging Models:
+    1. Publish-Subscribe (Pub-Sub)
+        - Working
+            - Producer publishes event/topic
+            - Multiple consumers receive same event
+        - Example
+            - "User Registered" Event consumed by:
+                - Email Service
+                - Analytics Service
+                - Notification Service
+        - Common Technology
+            - Kafka
+
+    2. Producer-Consumer Model
+        - Working
+            - Producer sends message
+            - Consumer processes message
+        - Usually
+            - One message → one consumer
+        - Example
+            - Order Service → Payment Service
+        - Common Technology
+            - RabbitMQ
+
+        - Advanced Queue Concepts
+            - Visibility Timeout:
+            - Suppose
+                - Consumer T1 consumes message M1
+            - Then
+                - M1 becomes invisible temporarily
+                - Other consumers cannot process it
+            - This prevents duplicate processing.
+
+            - Failure Scenario:
+            - If T1 fails before processing
+                - Visibility timeout expires
+                - Message becomes visible again
+                - Another consumer T2 can retry
+
+            - Dead Letter Queue (DLQ):
+            - Messages that continuously fail move into:
+            - Purpose
+                - Debug failures
+                - Analyze bad payloads
+                - Prevent infinite retries
+
+    - Difference Between Pub-Sub and Producer-Consumer
+        - Pub-Sub
+            - One message → multiple consumers
+            - Event broadcasting
+            - Kafka commonly used
+
+        - Producer-Consumer
+            - One message → one consumer
+            - Queue/task processing
+            - RabbitMQ commonly used
+        ---
+
+5. RabbitMQ Architecture
+    - RabbitMQ follows Producer-Consumer architecture.
+    - Core Components:
+        1. Broker
+            - Main RabbitMQ server.
+            - Responsibilities:
+                - Receive messages
+                - Manage queues
+                - Route messages
+
+        2. Exchange
+            - Producer sends messages to Exchange.
+            - Exchange decides
+                - Which queue should receive the message
+
+        3. Binding
+            - Connection between
+                - Exchange
+                - Queue
+
+        4. Queue
+            - Stores messages until consumed.
+
+    - Defines routing rules:
+        1. Direct Exchange
+            - Routing based on exact routing key match.
+            - Example
+                - Routing Key = payment
+                - Only matching queue receives message.
+
+        2. Fanout Exchange
+            - Broadcasts message to all connected queues.
+
+        3. Topic Exchange
+            - Pattern/wildcard-based routing.
+
+    -RabbitMQ Flow
+        1. Producer → Exchange
+        2. Exchange → Queue
+        3. Consumer → Queue consumption
+
+6. Kafka Architecture
+    - Kafka is a distributed event-streaming platform.
+    - Kafka is a messaging system for Async Communication.
+    - Used for
+        - High throughput
+        - Event streaming
+        - Asynchronous communication
+
+    - Kafka Components
+        1. Broker
+        - Kafka server storing/managing data.
+        - Multiple brokers form: ""Kafka Cluster""
+
+        2. Topic
+        - Logical category for events.
+        - Log files are stored.
+        - Examples
+            - User Events
+            - Payment Events
+            - Order Events
+
+        3. Partition
+        - Topics are divided into partitions.
+        - Benefits
+            - Parallel processing
+            - Load distribution
+
+    - Kafka Storage Model
+        - Kafka stores events in append-only log format.
+        - Example
+            - E1 → E2 → E3
+            - Messages are appended sequentially.
+
+    - Kafka Flow
+        1. Producer sends event to Topic
+        2. Topic stores event in Partitions
+        3. Consumers consume from Partitions
+        4. Events remain stored based on retention policy
+
+    - Kafka Consumer Groups
+        - Consumers are organized into groups.
+        - Example
+            - Group G1
+                - C1
+                - C2
+
+    - Important Kafka Rule:
+        - Inside the SAME consumer group -> One partition can be consumed by only one consumer at a time.
+        - Example:
+            - Partitions:
+                - P1
+                - P2
+                - P3
+            - Assignments:
+                - P1 → C1
+                - P2 → C2
+                - P3 → C3
+
+        - Parallel Processing:
+            - Kafka achieves parallelism using partitions.
+            - More partitions: More consumers can work simultaneously
+
+        - Rule: Number of active consumers ≤ Number of partitions
+
+7. Replication and Failover
+    - Suppose
+        - R1 = Master
+        - R2, R3 = Replicas
+    If Master fails
+        - Replica becomes new leader
+    This process is called -> Failover, Leader Election.
+
+8. 

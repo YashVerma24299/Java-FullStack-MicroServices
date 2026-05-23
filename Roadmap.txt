@@ -84,3 +84,11 @@
    - SSH Commands
    - Linux Users
    - Kafka Setup
+
+14. Microservices Communication, Messaging Patterns, Kafka and RabbitMQ
+   - Microservices Communication: Sync & Async communication
+   - Messaging Patterns: Pub/Sub Model, Producer/Consumer Model
+   - RabbitMQ: Architecture, usecase & components
+   - Kafka:- Architecture, usecase & components
+   - Project implementation & Code
+
