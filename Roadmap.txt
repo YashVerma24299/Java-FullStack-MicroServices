@@ -90,5 +90,5 @@
    - Messaging Patterns: Pub/Sub Model, Producer/Consumer Model
    - RabbitMQ: Architecture, usecase & components
    - Kafka:- Architecture, usecase & components
-   - Project implementation & Code
+   - Project implementation & Code(Producer and Consumer  -> Kafka)
 
