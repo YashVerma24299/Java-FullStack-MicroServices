@@ -1,0 +1,53 @@
+1. Use Docker Hub -> https://hub.docker.com/
+
+2. DOCKER COMPOSE
+    - Docker Compose is a tool used to manage multiple containers from a single file.
+    - Without Compose:
+        docker run mysql
+        docker run kafka
+        docker run springboot
+        Need to start each service manually.
+    - With Compose:
+        docker compose up -d
+        Everything starts automatically.
+
+    - Docker Compose is used because:
+        → Multiple containers
+        → Single configuration file
+        → Easy startup
+        → Easy shutdown
+        → Set priority for running the services
+            - depends_on:
+                - mysql
+                - kafka
+            - Meaning:
+                Start MySQL
+                    ↓
+                Start Kafka
+
+3. Docker Compose Commands
+    Start Services
+        docker compose up -d
+    Stop Services
+        docker compose down
+    Restart Services
+        docker compose restart
+    View Running Containers
+        docker compose ps
+    View Logs
+        docker compose logs
+
+    Specific Service:
+        docker compose logs kafka
+        docker compose logs mysql
+        docker compose logs springboot
+        docker compose up --build
+
+4. Docker Hub
+    - Docker Hub is: GitHub for Docker Images
+    - Stores:
+        → MySQL Images
+        → Kafka Images
+        → Redis Images
+        → Custom Images
+        
