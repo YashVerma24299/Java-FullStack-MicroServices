@@ -92,3 +92,8 @@
    - Kafka:- Architecture, usecase & components
    - Project implementation & Code(Producer and Consumer  -> Kafka)
 
+15. Integrating Kafka, AuthService and UserService in Expense Tracker App
+   - Architecture Understanding
+   - Implementation of code
+   - Built 2 Services (AuthService & UserService)
+
