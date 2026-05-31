@@ -1,0 +1,176 @@
+1. What is Docker
+    - Docker is a containerization platform.
+    - Docker is used to package applications along with their dependencies.
+    - It ensures the application runs the same way on:
+        → Developer Machine
+        → Testing Environment
+        → Staging Server
+        → Production Server
+
+    - Example Problem Without Docker:
+        -Developer PC
+            → Java 21
+            → MySQL 8.3
+            → Kafka 4.1
+        - Server
+            → Java 17
+            → MySQL 5.7
+            → Kafka Missing
+        - Result
+            → Application may fail.
+
+    -Solution:
+        - Docker packages
+            → Application + Required Libraries + Runtime Environment + Configuration + All dependencies
+
+2. Why Docker is Used
+    - Docker is used because:
+        → Easy deployment
+        → Lightweight compared to VMs
+        → Easy scaling
+        → Isolated services
+    - Common Uses
+        → Run MySQL
+        → Run Kafka
+        → Run Redis
+        → Run Spring Boot Applications
+        → Run Microservices
+        → CI/CD Deployments
+
+3. Why We Used Docker in Our Project
+    - Previously: Kafka installed manually
+    - Location: /home/kafka/Downloads/kafka
+    - Managed by: systemctl start kafka
+    - Now: We want
+        → Kafka inside Docker
+        → MySQL inside Docker
+
+    - Benefits:
+        → No manual installation
+        → Easy restart
+        → Easy deletion
+        → Same setup on any machine
+
+4. Understanding Docker
+    - To understand Docker, it is important to understand three concepts in order:
+        1. Dockerfile
+        2. Docker Image
+        3. Docker Container
+
+    - Dockerfile → Docker Image → Docker Container
+
+    1. Dockerfile
+        - A Dockerfile is a text file that contains a set of instructions for building an image.
+        - It defines:
+            - Startup commands
+            - Required dependencies
+            - Environment configurations
+
+        - In simple words: A Dockerfile is a blueprint or recipe used to create a Docker Image.
+
+    2. Docker Image
+        - A Docker Image is created from a Dockerfile.
+        - The image contains:
+            - Application compared
+            - Dependencies
+            - Configuration
+            - Instructions required to run the application
+
+        - For example:
+            - You have a User Service application.
+            - You create a Docker Image for it.
+                - docker build -t user-service .
+            - Now the image contains everything needed to run the User Service.
+            - The image can be:
+                - Stored locally
+                - Pushed to a Docker Registry
+                - Shared with other developers
+                - Deployed on any server
+
+        - Why Images Are Useful: 
+            - Suppose I created a Docker image for my User Service.
+            - Now if someone wants to run my application:
+                - They do not need my source code setup.
+                - They do not need to install dependencies manually.
+                - They simply pull the image and run it.
+            - Since the image already contains all required configurations, the application behaves the same everywhere.
+            - This solves the classic problem: "It works on my machine but not on yours."
+
+    3. Docker Container
+        - A Container is a running instance of an Image.
+        - Think of it like this:
+            Class → Object
+            Docker Image → Docker Container
+            
+        - Example:
+            - docker run --name user-service-container user-service
+
+        - Here:
+            - `user-service` = Image
+            - `user-service-container` = Running Container
+            - OVERALL: A single image can create multiple containers.
+
+    - Dockerfile → Contains build instructions.
+    - Image → Packaged application with dependencies.
+    - Container → Running instance of the image.
+
+5. Docker Installation
+    Update System:
+        → sudo apt update
+
+    Install Dependencies:
+        → sudo apt install ca-certificates curl -y
+
+    Create Key Directory:
+        → sudo install -m 0755 -d /etc/apt/keyrings
+
+    Download Docker GPG Key:
+        → sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+
+    Permission:
+        → sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    Add Repository:
+        → echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo ${UBUNTU_CODENAME:-$VERSION_CODENAME}) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    Update:
+        → sudo apt update
+
+    Install Docker:
+        → sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
+    Verify Installation:
+        → docker version
+        → docker compose version
+
+6. General Point: 
+    - In a Microservices Architecture, different services can be developed independently.
+    - For example:
+        - User Service may be written in Java.
+        - Payment Service may be written in Python.
+        - Notification Service may be written in Node.js.
+    
+    - However, services can also be written in the same language. Microservices do not require different technologies; they simply allow teams to choose the most suitable technology for each service.
+
+7. Basic Docker Commands
+    - Build an Image:
+        - docker build -t my-image .
+        - -t assigns a tag/name to the image.
+        - . indicates the current directory containing the Dockerfile.
+
+    - Run a Container:
+        - docker run --name my-container my-image
+        - This creates and starts a container from the image.
+
+    - List Running Containers:
+        - docker ps
+
+    - List All Containers:
+        - docker ps -a
+
+    - List Images:
+        - docker images
+
+    - View File Content: The `cat` command displays the contents of a file.
+        - cat filename.txt
+

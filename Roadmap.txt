@@ -97,3 +97,8 @@
    - Implementation of code
    - Built 2 Services (AuthService & UserService)
 
+16. Docker
+   - Architecture of Docker
+   - DockerFile, Image and Container
+   - Docker installation & its commands
+   - Building docker image
