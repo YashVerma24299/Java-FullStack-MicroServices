@@ -1,0 +1,26 @@
+1. Problem
+    - Error while starting AuthService/UserService:
+        - JDBCConnectionException
+        - Communications link failure
+        - Connection refused
+        - Unable to open JDBC Connection
+
+2. Solution
+    - Step 1: Stop Local MySQL Service
+        - sudo systemctl status mysql
+        - sudo systemctl stop mysql
+
+    - Step 2: Go to Docker Project
+        - cd ~/docker/kafka-mysql
+
+    - Step 3: Start Kafka and MySQL Containers
+        - docker compose up -d
+        - Expected:
+            - Container kafka Running
+            - Container mysql Running
+
+    - Step 4: Connect to MySQL Container
+        - docker exec -it mysql_id mysql -uroot -p
+        - Check databases: authservice, userservice
+
+3.  

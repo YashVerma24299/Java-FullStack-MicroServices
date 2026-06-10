@@ -107,3 +107,8 @@
    - Spring Boot Dockerization
    - Docker Compose Mastery
 
+18. Complete end to end userService and authService | Kafka, Spring boot, Mysql
+   - Running AuthService & UserService
+   - Docker Compose (Kafka & MySQL Containers)
+   - API Testing and Database Verification using Postman
+
