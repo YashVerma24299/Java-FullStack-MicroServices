@@ -112,3 +112,7 @@
    - Docker Compose (Kafka & MySQL Containers)
    - API Testing and Database Verification using Postman
 
+19. Dockerizing the Services & Integrating the API Gateway
+   - Dockerizing the AuthService, UserService, NGINX/KONG
+   - Integrating Kong Gateway (Build Container as well)
+   - Managing Port Mapping

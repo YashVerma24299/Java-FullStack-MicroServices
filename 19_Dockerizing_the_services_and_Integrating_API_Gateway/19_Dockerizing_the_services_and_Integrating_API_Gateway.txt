@@ -1,0 +1,254 @@
+1. Medium Blog
+    - https://medium.com/@SinghDevHub/api-gateways-whats-and-hows-with-implementation-563d9f371edb
+
+2. Problem in Microservices Architecture
+    - In a microservices architecture, each service typically runs independently on a separate port.
+    - Example
+        | Service              | Port |
+        | -------------------- | ---- |
+        | User Service         | 8081 |
+        | Payment Service      | 8082 |
+        | Order Service        | 8083 |
+
+    - If an application contains hundreds of microservices, managing all service URLs, IP addresses, and ports becomes difficult.
+    - This approach becomes hard to manage as the system grows.
+
+3. Solution -> API Gateway
+    - An API Gateway acts as a "single entry point" for all client requests.
+    - The client only communicates with the gateway, and the gateway handles routing to the appropriate service.
+        - Client → API Gateway → Microservice
+
+    - Popular API Gateway Solutions
+        - Kong  (I used this..)
+        - Spring Cloud Gateway
+        - NGINX
+        - AWS API Gateway
+        - Apigee
+
+4. Responsibilities of an API Gateway
+    1. Routing
+    - Routes incoming requests to the appropriate microservice.
+
+    2. Authentication & Authorization
+    - Verifies user identity and permissions before allowing access.
+
+    3. Rate Limiting
+    - Restricts the number of requests a client can send within a specific time period.
+
+    4. Request & Response Transformation
+    - Can modify requests and responses when necessary.
+
+5. Kong API Gateway
+    - Kong is one of the most popular open-source API Gateways.
+    - Request Flow
+        Client
+           ↓
+        Kong Gateway
+           ↓
+        Target Microservice
+
+    - How Kong Works
+        - Client sends request.
+        - Kong receives request.
+        - Kong checks routing rules.
+        - Kong identifies target service.
+        - Kong forwards request.
+        - Service processes request.
+        - Response returns through Kong.
+
+6. CDN and API Gateway Request Flow
+    - When a user sends a request to our application, the request can be handled in two ways depending on the type of content being requested.
+    1. If the request is for static content such as images, CSS files, JavaScript files, videos, PDFs, or documents, the request is usually served by the CDN (Content Delivery Network).
+        - Flow:
+        - User Request → CDN → Cached Content → Response
+        - A CDN stores copies of static files at multiple locations around the world. When a user requests a static file, the CDN returns the file from the nearest location instead of forwarding the request to the backend servers.
+
+        - Benefits of CDN:
+            - Faster response time
+            - Reduced latency
+            - Reduced backend server load
+
+        - Popular CDN providers include Cloudflare, Akamai, AWS CloudFront, and Fastly.
+        - However, not every request can be served by a CDN.
+
+    2. If the request requires business logic or database interaction, it must be forwarded to the backend services.
+        - Flow:
+        - User Request → CDN → API Gateway → Microservices → Database → Response
+
+        - In this case, the CDN simply forwards the request because it cannot cache or process dynamic business operations.
+        - The API Gateway acts as the central entry point for all backend services. It receives incoming requests and routes them to the appropriate microservice.
+
+        - Examples:Login, Payments, Database Operations
+
+7. Real-World Example
+    - Suppose a user opens: https://amazon.com/orders
+    - Flow:
+        User
+            ↓
+        DNS
+            ↓
+        CloudFront CDN
+            ↓
+        Load Balancer
+            ↓
+        Kong API Gateway
+            ↓
+        Order Service
+            ↓
+        MySQL Database
+
+    - The response follows the reverse path back to the user.
+
+8. Dockerizing Microservices: From Source Code to Containers
+    - High-Level Flow:
+        Source Code
+            ↓
+        Build JAR
+            ↓
+        Dockerfile
+            ↓
+        Docker Image
+            ↓
+        Docker Container
+    
+    1. Build the Application
+        - Microservices are built using Spring Boot + Gradle.
+        - Build Command
+            - ./gradlew clean build
+
+        - What this does:
+            - Cleans previous builds
+            - Compiles source code
+            - Runs tests (if configured)
+            - Generates executable JAR file
+
+        - Output Location
+            - build/libs/
+
+        - Use the --executable JAR--
+        - Do NOT use `plain.jar` (it does not contain dependencies)
+
+    2. Organize JAR Files
+        - Create a structured Docker workspace:
+            docker/
+            ├── jars/
+            │   ├── user-service.jar
+            │   ├── auth-service.jar
+
+    3. Create Dockerfile
+        - Each microservice needs its own Dockerfile.
+        - Example Dockerfile (Auth Service)
+            FROM amazoncorretto:21-alpine-jdk
+            LABEL maintainer="yash"
+            COPY app-1.0.0.jar auth-service.jar
+            ENTRYPOINT ["java", "-jar", "/auth-service.jar"]
+
+        - Key Components
+            - FROM → Base image (JRE runtime)
+            - COPY → Copies JAR into container / (source name to required name)
+            - ENTRYPOINT → Command to run application
+
+    4. Build Docker Images
+        - Create images from Dockerfiles.
+        - Commands
+            - docker build -t auth-service -f Dockerfileauth .
+
+    5. docker-compose.yml
+        - Managing multiple containers manually is difficult.
+        - So we use Docker Compose.
+        - Add like this:
+            user-service:
+                image: user-service
+                container_name: user-service
+                ports:
+                - '9810:9810'
+                depends_on:
+                - kafka
+                - mysql
+
+            auth-service:
+                image: auth-service
+                container_name: auth-service
+                ports:
+                - '9898:9898'
+                depends_on:
+                - kafka
+                - mysql
+
+9. Project Structure
+    - Inside the Docker workspace, I created a configuration folder:
+        docker/
+        ├── config/
+        │   └── kong.yml
+        ├── Dockerfileuser
+        ├── Dockerfileauth
+        ├── docker-compose.yml
+        └── kong-compose.yml
+
+10. Kong Configuration File
+    1. Inside the `config` folder, I created a:  "kong.yml"
+        - This file contains:
+            - Service definitions
+            - Route mappings
+
+        - Example:
+            _format_version: "3.0"
+            services:
+            - name: auth-service
+                url: http://auth-service:9898
+                routes:
+                - name: auth-route
+                    paths:
+                    - /auth
+                            
+            - name: user-service
+                url: http://user-service:9810
+                routes:
+                - name: user-route
+            paths:
+            - /user
+
+    2. Apart from the configuration file, I created a separate Kong deployment configuration file in the Docker directory.   (kong.yml)
+        -This file is similar to a Docker Compose configuration.
+
+        It contains:
+        - Kong container configuration
+        - Network configuration
+        - Port mappings
+        - Volume mappings
+
+    - To start Kong, I used a dedicated compose file:
+        - docker compose -f kong.yml up -d
+
+11. Overall:
+    - Earlier:
+        - I used to run all services manually from IntelliJ
+
+    - Now (Dockerized Flow):
+        All Services Managed by Docker Compose
+                ↓
+        docker compose up -d
+                ↓
+        Starts everything automatically:
+                - MySQL Database
+                - Kafka
+                - User Service
+                - Author Service
+                - Kong Gateway
+
+    - Key Idea
+        - No need to run services from IntelliJ anymore
+
+    - Single command handles full system startup:
+        - docker compose up -d
+
+    - Request Flow 
+        Postman Request
+                ↓
+        Kong Gateway (Entry Point)
+                ↓
+        Routes request to appropriate service:
+                - User Service
+                - Auth Service
+                ↓
+        Each service interacts with MySQL if needed
