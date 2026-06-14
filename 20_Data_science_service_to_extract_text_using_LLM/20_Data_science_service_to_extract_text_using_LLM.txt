@@ -1,0 +1,16 @@
+1. Medium Blog
+    - https://blog.gopenai.com/python-langchain-and-openai-api-building-a-datascience-service-to-extract-any-text-from-6936b129feb0
+
+2. Sample:
+    - POST -> http://localhost:8000/v1/ds/message
+
+    - Body: {
+                "message": "INR 294.99 spent on ICICI Bank Card XX7003 on 23-Apr-24 at TW Coffee Kora. Avl Lmt: INR 43,266.15. To dispute,call 18002662/SMS BLOCK 7003 to 9215676766"
+            }
+
+    - Output: {
+                "amount": "294.99",
+                "currency": "INR",
+                "merchant": "TW Coffee Kora"
+              }
+

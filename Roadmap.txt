@@ -116,3 +116,6 @@
    - Dockerizing the AuthService, UserService, NGINX/KONG
    - Integrating Kong Gateway (Build Container as well)
    - Managing Port Mapping
+
+20. Build data science service to extract text using LLMs (Python)
+   - Extracting meaningful text from SMS messages using LLMs.
