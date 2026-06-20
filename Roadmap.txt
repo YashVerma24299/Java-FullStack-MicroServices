@@ -119,3 +119,8 @@
 
 20. Build data science service to extract text using LLMs (Python)
    - Extracting meaningful text from SMS messages using LLMs.
+
+21. Expense Service Implementation
+   - Building Expense service
+   - Completing Data Science service  
+

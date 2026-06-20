@@ -1,0 +1,1 @@
+Data Science Service(Python) -> Produce Event -> Kafka -> Consume Event By Expense Service  -> Store Data in expenseservice Databse 
