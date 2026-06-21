@@ -220,6 +220,8 @@
     - To start Kong, I used a dedicated compose file:
         - docker compose -f kong.yml up -d
 
+    *2. We will Removing the second kong.yml and merging with main docker-compose.yml file.
+
 11. Overall:
     - Earlier:
         - I used to run all services manually from IntelliJ
