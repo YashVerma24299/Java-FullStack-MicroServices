@@ -124,3 +124,8 @@
    - Building Expense service
    - Completing Data Science service  
 
+22. Production Readiness
+   - Environment variables
+   - Config management
+   - Preparing services for deployment
+

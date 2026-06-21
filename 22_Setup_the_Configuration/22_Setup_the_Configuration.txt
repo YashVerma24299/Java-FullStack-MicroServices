@@ -1,0 +1,121 @@
+1. Updating Docker Compose
+    - First, I updated the main docker-compose.yml file.
+    - Changes made:
+        - Added Expense Service.
+        - Added DS Service.
+        - Added Kong configuration directly into the main docker-compose.yml.
+        - Updated environment variables for all services.
+        - Removed the separate Kong compose/configuration setup because all configurations were consolidated into the main docker-compose.yml.
+
+2. Using Hostnames Instead of IP Addresses
+    - Initially, service communication was based on IP addresses.
+    - Later, I switched to Docker hostnames because Docker automatically provides service discovery within the same network.
+    - For example:
+        - Before = 192.168.x.x:9092
+        - After = kafka:9092
+        --------------------  spring.kafka.bootstrap-servers=${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
+    - Similarly for MySQL:
+     - mysql:3306
+
+    - Docker resolves these service names automatically to the correct container IP addresses.
+    - This makes the configuration cleaner and more portable.
+
+3. How This Works (Hostnames)
+    - When the application starts, it first checks whether the environment variable exists.
+    - Example:
+        - ${KAFKA_HOST:localhost}
+        - Meaning:
+            - If KAFKA_HOST is available, use its value.
+            - Otherwise, use localhost.
+        - ${MYSQL_HOST:localhost}
+        - Meaning:
+            - If MYSQL_HOST is available, use it.
+            - Otherwise, use localhost.
+
+    - Running Inside Docker:
+        - When containers are started through Docker Compose, environment variables are provided.
+        - Example -> environment:
+            KAFKA_HOST: kafka
+            KAFKA_PORT: 9092
+            MYSQL_HOST: mysql
+            MYSQL_PORT: 3306
+        - Therefore:
+            KAFKA_HOST = kafka
+            MYSQL_HOST = mysql
+        - The application automatically connects using Docker hostnames.
+
+    - Running from IntelliJ
+        - When running directly from IntelliJ:
+        - No Docker environment variables are available.
+        - Therefore the fallback values are used.
+        - Example:
+            KAFKA_HOST → localhost
+            MYSQL_HOST → localhost
+        - This allows the same codebase and configuration to work in both environments without modification.
+
+4. Ports:
+    auth-service     -> 9898
+    user-service     -> 9810
+    expense-service  -> 9820
+    ds-service	     -> 8010
+    mysql            -> 3306
+    kafka            -> 9092
+    kong             -> 8000, 8443, 7990
+
+5. Dockerizing Expense Service and DS Service
+    - The Expense Service is a Spring Boot application, so its Dockerization process was similar to the User and Auth Services.
+    - However, the DS Service is a Python-based application, so it required some additional setup and a slightly different Dockerization process.
+
+    - DS Service Dockerization (Python Application)
+    - Step 1: Install Required Packaging Tools
+        - First, I installed the required Python packaging tools that are needed to package the application properly.
+        - pip3 install setuptools
+
+    - Step 2: Convert requirements.txt into setup.py
+        - Initially, the project dependencies were managed using: requirements.txt
+        - To package the application more effectively, I created a: setup.py file.
+        - The setup file contains:
+            -  Package name
+            -  Version
+            -  Description
+            -  Dependencies
+            -  Source location
+            -  Project metadata
+            -  Installation configuration
+
+    - Step 3: Create **init**.py Files
+        - I created the required: __init__.py files.
+        - These files allow Python directories to be recognized as packages and make module imports work correctly.
+
+    - Step 4: Convert Relative Imports to Absolute Imports
+        - When running applications inside Docker containers, absolute imports are generally more reliable.
+        - Therefore, I updated import statements.
+        - Example:
+            Before: service.messageutil import MessageUtil
+            After: from app.service.messageutil import MessageUtil
+        - Using absolute paths helped avoid module resolution issues inside the container.
+
+    - Step 5: Create Distribution Package
+        - After completing the project setup, I generated a source distribution package.
+        - Command: python3 setup.py sdist
+        - Purpose:
+            - Creates a distributable package.
+            - Generates a `.tar.gz` archive.
+            - Packages the application source code and metadata.
+
+    - Step 6: Create Dockerfile
+        - After generating the package, I created a Dockerfile for the DS Service.
+        - The Dockerfile contains:
+            - Python base image
+            - Working directory
+            - Package copy commands
+            - Dependency installation commands
+            - Application startup commands
+            - Entry point configuration
+
+        - This Dockerfile is responsible for creating the DS Service image.
+
+    - Step 7: Build Docker Image
+        - After creating the Dockerfile, I executed the Docker build command to generate the image.
+        - Example: docker build --no-cache -t ds-service .
+        - This created the Docker image for the Python application.
