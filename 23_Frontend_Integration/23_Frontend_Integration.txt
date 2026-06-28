@@ -1,0 +1,117 @@
+1. React Native Development Setup (Linux + VS Code + Physical Android Device)
+    - This is a clean reference checklist for daily React Native development using a physical Android phone, project-level Android SDK, and Linux environment.
+
+    1. One-Time Installation Checks
+        - Check Node.js: node -v
+        - Check npm: npm -v
+        - Check ADB: adb version
+        - Check Java: java --version
+            - Expected:
+                - Java 17-20 supported
+
+    2. Connect Android Phone
+        - Enable Developer Options
+            - Settings
+                → About Phone
+                → Tap Build Number 7 times
+        - Enable USB Debugging
+            - Settings
+                → Developer Options
+                → USB Debugging ON
+
+        - Connect USB Cable
+            - Verify: Run this command -> adb devices
+                - Expected: XXXXXXXX    device
+                - If it shows: unauthorized
+                - Accept the popup on the phone.
+
+    3. Open React Native Project
+        - cd ~/Personal/Folder/3_Expense_Tracker/expenseTrackerApp
+
+    4. Verify Android SDK Exists
+        - In Android SDK:
+            - Expected folders
+                build-tools
+                cmdline-tools
+                platform-tools
+                platforms
+                licenses
+
+    5. Verify local.properties
+        - cat android/local.properties
+        - Expected: sdk.dir=/home/yash-verma/Personal/Folder/3_Expense_Tracker/expenseTrackerApp/android-sdk
+
+    6. First Install / Rebuild APK
+        - npx react-native run-android
+        - Keep USB connected until installation completes.
+
+    7. Start Metro Server
+        - Open Terminal 1:
+            npx react-native start
+            Wait until Metro starts.
+            Leave this terminal running.
+
+    8. Connect Metro to Phone
+        - Open Terminal 2:
+            adb reverse tcp:8081 tcp:8081
+            No output = success.
+        - Run this command(GENERAL):
+            Phone reconnects
+            Phone restarts
+            Laptop restarts
+
+    9. Daily Development Workflow
+        - Terminal 1: npx react-native start
+        - Terminal 2: adb reverse tcp:8081 tcp:8081  &&  adb reverse tcp:9098 tcp:9098
+
+    10. After Installing New Package
+        - RUN: npx react-native run-android
+
+    11. If App Shows "Unable to load script"
+        - Run: adb reverse tcp:8081 tcp:8081  &&  adb reverse tcp:9098 tcp:9098
+        - Make sure Metro is running: npx react-native start
+        - Then press: Reload on the phone.
+
+2. General:
+    - Outside Expense Tracker
+        -node -v: v20.20.1
+    - Inside Expense Tracker:
+        - nvm use
+        - node -v
+            → v22.11.0 or other
+
+    - For installing a packages:
+        - cd ~/Personal/Folder/3_Expense_Tracker/expenseTrackerApp
+            nvm use        
+            npm install -g yarn 
+            yarn -v
+
+3. Theory:
+The authentication flow starts when the user lands on the Login screen, where the `useEffect()` method is executed automatically.
+It first calls `loginService.isLoggedIn()`, which checks for an access token stored in `AsyncStorage`. 
+If an access token is available, the app sends a request to the `/auth/v1/ping` endpoint to verify whether the token is still valid. 
+If the token is valid, the user is navigated directly to the Home screen. 
+If the access token is missing or has expired, the app attempts to generate a new access token by calling the `/auth/v1/refreshToken` endpoint using the stored refresh token.
+If the refresh token is valid, the backend returns new access and refresh tokens, which are stored again in `AsyncStorage`, and the user is redirected to the Home screen. 
+If the refresh token is also invalid or unavailable, the user remains on the Login screen and must log in manually. 
+During login, the app sends the username and password to the `/auth/v1/login` endpoint, and upon successful authentication, the backend returns both access and refresh tokens, which are stored before navigating the user to the Home screen. 
+Similarly, during signup, the app calls the `/auth/v1/signup` endpoint, and if the user is successfully registered, the backend generates and returns access and refresh tokens, allowing the frontend to store them and navigate the user directly to the Home screen without requiring a separate login.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

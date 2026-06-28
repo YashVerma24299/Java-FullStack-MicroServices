@@ -129,3 +129,8 @@
    - Config management
    - Preparing services for deployment
 
+23. End-to-End Authentication & Frontend
+   - Full authentication flow
+   - Frontend integration
+   - Secure communication between services
+
