@@ -1,0 +1,44 @@
+1. Kong API Gateway Integration
+    - The primary focus of this implementation was integrating Kong API Gateway into the Expense Tracker microservices architecture. 
+    - Instead of allowing clients to directly access the microservices, every incoming request is first routed through Kong, which acts as a single entry point for the entire system.
+    - Authentication Flow: 
+        - Every client request first reaches the Kong API Gateway.
+        - A custom Lua authentication plugin intercepts each request.
+        - The plugin extracts the JWT token from the Authorization header.
+        - Kong sends a validation request to the Auth Service.
+        - If the token is valid, the Auth Service returns the corresponding User ID.
+        - Kong injects the User ID into the request header (e.g., `X-User-ID`) and forwards the request to the appropriate microservice such as the Expense Service.
+        - If token validation fails, Kong immediately returns 401 Unauthorized, preventing unauthorized access to internal services.
+
+2. Custom Kong Plugin
+    - A custom authentication plugin was developed using Lua to handle the complete authentication workflow.
+    - Plugin Files:
+        1. handler.lua
+            - Implements the authentication logic.
+            - Calls the Auth Service for JWT validation.
+            - Extracts the User ID.
+            - Adds the User ID to the request header.
+            - Returns Unautorized if validation fails.
+
+        2. schema.lua
+            - Defines the plugin configuration schema used by Kong.
+
+3.Changes Made
+    - Updated -> config/kong.yml:
+        - Registered the custom authentication plugin.
+        - Configured routes and services.
+        - Applied the custom authentication plugin to protected routes.
+
+    - Created a custom plugin directory:
+        - custom_plugins/custom_auth/
+            - `handler.lua`
+            - `schema.lua`
+
+    - Docker Configuration:
+        - The docker-compose.yml file was updated to include Kong-specific configuration.
+
+4. Request Flow
+    - Client → Kong API Gateway → Custom Lua Plugin → Auth Service (JWT Validation) → User ID Retrieved → Request Forwarded to Target Service (Expense/Data Science/etc.)
+
+    -If JWT is invalid:
+        - Client → Kong API Gateway → 401 Unauthorized

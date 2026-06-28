@@ -134,3 +134,7 @@
    - Frontend integration
    - Secure communication between services
 
+24. API Gateway Integration
+   - API Gateway concepts
+   - Kong setup (Custom Kong Plugin)
+   - Routing between services
