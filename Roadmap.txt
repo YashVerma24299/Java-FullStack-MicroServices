@@ -138,3 +138,11 @@
    - API Gateway concepts
    - Kong setup (Custom Kong Plugin)
    - Routing between services
+
+25. AWS & Networking Basics
+   - AWS fundamentals
+   - Networking concepts
+   - Deployment understanding
+   - Class components
+   - NAT, CIDR 
+
