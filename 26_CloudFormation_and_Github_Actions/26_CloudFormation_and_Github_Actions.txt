@@ -1,0 +1,371 @@
+                CloudFormation Template Version
+
+1. AWSTemplateFormatVersion: '2010-09-09'
+    - This tells AWS which CloudFormation template format is being used.
+    - AWS currently recommends using '2010-09-09'.
+    - It is NOT today's date.
+    - It is simply the version of the CloudFormation language.
+    - Every CloudFormation template starts with this line.
+    - Without this line the template may still work,
+    - but AWS recommends including it.
+
+2. Description
+    - A human-readable description.
+    - This description appears inside the AWS Console when someone opens the CloudFormation stack.
+    - It has absolutely no effect on deployment.
+    - It is only for documentation purposes.
+
+3. Mappings
+    - Mappings work like a dictionary or lookup table.
+    - Instead of writing the same values many times, we define them once here.
+    - Later we retrieve them using !FindInMap.
+    - Think of it like: Java
+        Map<String,String> map = new HashMap<>();
+        map.put("VPC","10.0.0.0/16");
+    - CloudFormation:
+        Mappings:
+            SubnetConfig:
+                VPC:
+                    CIDR: 10.0.0.0/16
+
+    - CIDR means: Classless Inter-Domain Routing
+    - It defines the IP address range, available inside the VPC.
+    - This VPC owns: 10.0.0.0 -> through 10.255.255.255 -> because of /16.
+    - Total IPs: 65,536
+    - CIDR: '10.0.0.0/16'
+
+    -Subnet:
+    -PublicOne:
+        - First public subnet.
+        - Notice that it belongs, inside the VPC range.
+        - VPC: 10.0.0.0/16
+        - Subnet: 10.0.0.0/24
+        - /24 gives 256 IP addresses.
+        - CIDR: '10.0.0.0/24'
+
+    -PublicTwo:
+        - Second subnet.
+        - Different IP range.
+        - AWS requires an ALB to be placed in at least two Availability Zones for High Availability.
+        - CIDR: '10.0.1.0/24'
+
+    -PrivateOne:
+        - Private subnet.
+        - Servers inside this subnet usually don't receive public IPs.
+        - Databases, Internal Services -> normally live here.
+        - CIDR: '10.0.2.0/24'
+
+    -PrivateTwo:
+        - Another private subnet
+        - in another Availability Zone.
+        - CIDR: '10.0.3.0/24'
+
+4. Resources Section
+    - Everything inside Resource becomes an AWS resource.
+    - Examples:
+    - EC2
+    - VPC
+    - IAM Role
+    - ECS Cluster
+    - Load Balancer
+    - NAT Gateway
+
+Resources:
+1. VPC
+    - Logical Name
+    - This is NOT the AWS name.
+    - This is CloudFormation's internal identifier.
+    - Later we can write: !Ref VPC and CloudFormation understands we are referring to this resource.
+
+    1. AWS Resource Type: AWS::Service::Resource
+        - Service = EC2
+        - Resource = VPC
+    - CloudFormation now knows it must call the EC2 API to create a Virtual Private Cloud.
+    - Type: AWS::EC2::VPC
+
+    2. Configuration of the VPC (Properties):
+        - EnableDnsSupport: true
+        - EnableDnsHostnames: true
+        - VPC CIDR Block: Instead of writing 10.0.0.0/16 directly, we read it from our Mapping.
+        - CidrBlock: !FindInMap ['SubnetConfig', 'VPC', 'CIDR']
+
+2. PublicSubnetOne:
+    - Creates the first Public Subnet.
+    - A subnet is a smaller network inside a VPC.
+    - Every subnet must belong to exactly one VPC.
+    - Public subnet means resources can communicate with the Internet (after Internet Gateway and Route Table configuration).
+    - AWS Resource Type:
+        - Service = EC2
+        - Resource = Subnet
+    - Type:
+        - AWS::EC2::Subnet
+
+    - Properties:
+    1. AvailabilityZone
+        !Select
+            - 0
+            - Fn::GetAZs: !Ref AWS::Region
+        Explanation:
+            - Decides in which Availability Zone this subnet will be created.
+            - AWS Region contains multiple Availability Zones.
+        Example:
+            - Region: ap-south-1
+            - Availability Zones: ap-south-1a, ap-south-1b, ap-south-1c
+
+        !Select
+        - Selects one item from the list.
+        0 means:
+        - Select the first Availability Zone.
+        Fn::GetAZs
+        - Returns all Availability Zones available in the current region.
+        - Example Return: [ap-south-1a,ap-south-1b,ap-south-1c]
+        Result:
+        - ap-south-1a
+
+    2. VpcId: !Ref VPC
+        - Connects this subnet with the VPC.
+        - !Ref returns the Physical ID of the VPC.
+        - CloudFormation automatically understands that the VPC must be created first.
+
+    3. CidrBlock: !FindInMap['SubnetConfig','PublicOne','CIDR']
+        Explanation:
+        - Reads the CIDR from Mapping.
+        - Avoids hardcoding IP addresses.
+
+    4. MapPublicIpOnLaunch: true
+        Explanation:
+        - Automatically assigns a Public IP to every EC2 launched inside this subnet.
+
+3. PublicSubnetTwo (ALL SAME)
+    - AWS Load Balancer requires at least two Availability Zones for High Availability.
+
+4. PrivateSubnetOne
+
+5. PrivateSubnetTwo
+
+6. InternetGateway: Type: AWS::EC2::InternetGateway
+    Explanation:
+    - Creates an Internet Gateway (IGW).
+    - Internet Gateway is the component that allows resources inside a VPC to communicate with the Internet.
+    - Without an Internet Gateway:
+        - Resources cannot access the Internet.
+        - Internet
+            ❌
+            |
+            |
+            VPC
+
+    - With an Internet Gateway:
+        - Now public resources can access the Internet.
+        - Internet
+            |
+            |
+          Internet Gateway
+            |
+            |
+            VPC
+
+    - IMPORTANT: 
+        - Creating an Internet Gateway alone does NOT provide Internet access.
+        - It must be attached to a VPC.
+
+7. VPC Gateway Attachment: Type: AWS::EC2::VPCGatewayAttachment
+    - Properties:
+        - VpcId: !Ref VPC -> (Specifies which VPC should receive the Internet Gateway)
+        - InternetGatewayId: !Ref InternetGateway -> (Specifies which Internet Gateway should be attached)
+        Explanation:
+        - Attaches the Internet Gateway to the VPC.
+        - Before attachment
+
+8. Public Route Table: (Type: AWS::EC2::RouteTable)
+    Explanation:
+    - Creates a Route Table.
+    - Route Table decides where network traffic should go.
+
+9. Public Route: (Type: AWS::EC2::Route)
+    - DependsOn: GatewayAttachement
+    - Properties:
+        - RouteTableId: !Ref PublicRouteTable
+        - DestinationCidrBlock: 0.0.0.0/0
+        - GatewayId: !Ref InternetGateway
+    Explanation:
+    - Creates the actual routing rule.
+    - Route means:
+    "If traffic is going somewhere,which path should it take?"
+
+10. Public Subnet One Route Association
+    Explanation:
+    - Associates Public Subnet One with the Public Route Table.
+
+    - Without this association
+        Subnet
+        ↓
+        No Route Table
+        ↓
+        No Internet
+
+    - After Association
+        Subnet
+        ↓
+        Public Route Table
+        ↓
+        Internet Gateway
+        ↓
+        Internet
+
+11. Public Subnet Two Route Association (SAME + QUESTION)
+    - Why do both Public Subnets use the same Public Route Table?
+        - Because both require Internet access.
+        - One Route Table can be associated with multiple Subnets.
+
+    - Overall Flow:
+        Internet
+        ↓
+        Internet Gateway
+        ↓
+        Public Route
+        ↓
+        Public Route Table
+        ↓
+        Public Subnet One / Public Subnet Two
+        ↓
+        EC2 Instances
+
+12. Elastic IP (EIP)
+    - NatGatewayOneAttachment: Type: AWS::EC2::EIP
+    - DependsOn: GatewayAttachement -> (CloudFormation first creates and attaches the Internet Gateway & Only then does it allocate the Elastic IP)
+    - Explanation:
+    - Creates an Elastic IP (EIP).
+    - Elastic IP is a permanent Public IPv4 address.
+    - Unlike a normal Public IP, an Elastic IP remains the same until you release it.
+    - This Elastic IP will later be attached to the NAT Gateway.
+
+13. Second Elastic IP
+    Explanation:
+    - Creates another Elastic IP.
+    - Used by the second NAT Gateway.
+    - Each NAT Gateway requires its own dedicated Elastic IP.
+
+14. NAT Gateway One  (Type: AWS::EC2::NatGateway)
+    Explanation:
+    - Creates the first NAT Gateway.
+    - NAT Gateway allows PRIVATE resources to access the Internet.
+    - Internet cannot initiate communication back to the private resources.
+
+15. NAT Gateway Two
+
+16. Private Route Table One (Type: AWS::EC2::RouteTable)
+    Explanation:
+    - Creates a Route Table for Private Subnet One.
+    - Unlike the Public Route Table, this Route Table will NOT point directly to the Internet Gateway.
+    - Instead, it points to the NAT Gateway.
+
+17. Private Route One
+    Explanation:
+        Private EC2
+        ↓
+        Private Route Table
+        ↓
+        0.0.0.0/0
+        ↓
+        NAT Gateway
+        ↓
+        Internet Gateway
+        ↓
+        Internet
+
+18. Private Route Table One Association
+    - Private Subnet One with Private Route Table One.
+
+10. Private Route Table Two
+
+20. Private Route Two
+
+21. Private Route Table Two Association
+
+    Public Traffic:
+        Internet
+        ↓
+        Internet Gateway
+        ↓
+        Public Route Table
+        ↓
+        Public Subnets
+
+    Private Traffic:
+        Private EC2
+        ↓
+        Private Route Table
+        ↓
+        NAT Gateway
+        ↓
+        Internet Gateway
+        ↓
+        Internet
+
+22. PublicLoadBalancerSG (Security Group) (Type: AWS::EC2::SecurityGroup)
+    Explanation:
+    - Creates a Security Group for the Application Load Balancer (ALB).
+    - A Security Group works like a firewall.
+    - It decides:
+        Who can connect?
+        Which ports are allowed?
+        Which protocol is allowed?
+
+    1. SecurityGroupIngress: Incoming Traffic.
+    - Example:
+        Internet
+        ↓
+        Load Balancer
+        ↓
+        Application
+
+    2. CidrIp: 0.0.0.0/0
+    - Means:
+        - Allow everyone.
+        - Any IP Address from anywhere can reach this Security Group.
+
+    3. IpProtocol
+    - -1 means: Allow all protocols.
+    - Examples:  TCP, UDP
+
+23. PublicLoadBalancer (Type: AWS::ElasticLoadBalancingV2::LoadBalancer)
+    Explanation:
+    - Creates an Application Load Balancer (ALB).
+
+    - What is an ALB?
+    - Suppose 1000 users open your website.
+    - Without ALB
+        All requests
+        ↓
+        One Server
+        ↓
+        Server crashes.
+
+    - With ALB
+        Users
+        ↓
+        Application Load Balancer
+        ↓
+        Server 1
+        ↓
+        Server 2
+        ↓
+        Server 3  (Traffic is distributed.)
+
+24. DummyTargetGroupPublic
+
+25. PublicLoadBalancerListener (Type: AWS::ElasticLoadBalancingV2::Listener)
+    Explanation:
+    - Listener waits for incoming requests.
+
+26. ECSCluster   (Type:AWS::ECS::Cluster)
+    Explanation:
+    - Creates an ECS Cluster.
+    - What is an ECS Cluster?   
+        - Think of it as a container parking area.
+        - Containers cannot run without a Cluster.
+
+    - ClusterName: expense-tracker
+
+27. ContainerSecurityGroup
