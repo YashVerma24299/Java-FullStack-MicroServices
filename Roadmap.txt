@@ -152,3 +152,9 @@
    - Infrastructure as Code basics
    - AWS setup
    - Github Actions
+
+27. Infrastructure Deployment using AWS CDK
+   - VPC creation with CDK
+   - CDK fundamentals
+   - 26 and 27 are different ways of performing the same thing.
+
