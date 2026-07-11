@@ -157,4 +157,15 @@
    - VPC creation with CDK
    - CDK fundamentals
    - 26 and 27 are different ways of performing the same thing.
+   - ExpenseTrackerServicesDeployStack
 
+28. Database & Messaging Deployment with AWS CDK
+   - MySQL deployment
+   - Kafka setup
+   - Using TypeScript with CDK
+   - ExpenseTrackerServicesStack
+
+29. AuthServices Deployment on AWS
+   - AuthService deployment Using TypeScript with CDK
+   - AWS Configure + Deploying
+   - ExpenseBackendServices
