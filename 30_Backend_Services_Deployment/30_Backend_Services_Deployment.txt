@@ -1,0 +1,18 @@
+1. ExpenseTrackerServiceDeploy
+    - Deploy 4 Stack
+        - Cdk Toolkit
+        - VpcStack
+        - Mysql and Kafka Stack
+        - All Backend Stack
+
+2. After Mysql Stack we foillow some steps:
+    - create database userservice;
+    - create database authservice;
+    -  create database expenseservice;
+    - grant all privileges on *.* to 'root'@'%';
+    - grant all privileges on authservice.* to 'user'@'%';
+    - grant all privileges on userservice.* to 'user'@'%';
+    - grant all privileges on expenseservice.* to 'user'@'%';
+    - flush privileges;
+
+3. Use kong DNS NAME

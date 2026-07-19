@@ -169,3 +169,10 @@
    - AuthService deployment Using TypeScript with CDK
    - AWS Configure + Deploying
    - ExpenseBackendServices
+
+30. Backend Services Deployment on AWS
+   - Deploying microservices
+   - Load balancers integration
+   - Security groups configuration
+   - Full system integration
+   - AWS deployment
